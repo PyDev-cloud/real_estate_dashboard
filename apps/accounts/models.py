@@ -8,7 +8,7 @@ class User(AbstractUser):
         ('investor', 'Investor'),
     )
     user_type = models.CharField(max_length=20, choices=USER_TYPE_CHOICES)
-
+    email=models.EmailField(unique=True)
     def is_admin(self):
         return self.user_type == 'admin'
 

@@ -1,0 +1,98 @@
+{% load socialaccount %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Management</title>
+    <!-- Bootstrap CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+<div class="container mt-5">
+    <div class="row">
+        <!-- বাম পাশে: ইউজার তৈরি করার ফর্ম -->
+        <div class="col-md-5 mb-4">
+            <div class="card shadow">
+                <div class="card-body">
+                    <h3 class="card-title text-center mb-4">Create New User</h3>
+                    
+                    <form action="{% url 'user-list' %}" method="POST">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Username</label>
+                            <input type="text" class="form-control" id="username" name="username" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" name="email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="password" name="password" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="user_type" class="form-label">User Type</label>
+                            <select class="form-select" id="user_type" name="user_type" required>
+                                <option value="investor">Investor</option>
+                                <option value="admin">Admin</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Create User</button>
+                    </form>
+
+                    <!-- সোশ্যাল লগইন -->
+                    <hr class="my-4">
+                    <h5 class="text-center mb-3">Or Login via Social</h5>
+                    <div class="d-grid gap-2">
+                        <a href="{% provider_login_url 'google' %}" class="btn btn-danger">Login with Google</a>
+                        <a href="{% provider_login_url 'facebook' %}" class="btn btn-primary">Login with Facebook</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ডান পাশে: সব ইউজারের লিস্ট -->
+        <div class="col-md-7">
+            <div class="card shadow">
+                <div class="card-body">
+                    <h3 class="card-title text-center mb-4">All Users</h3>
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Username</th>
+                                    <th>Email</th>
+                                    <th>Role</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for u in users %}
+                                <tr>
+                                    <td>{{ u.username }}</td>
+                                    <td>{{ u.email }}</td>
+                                    <td>
+                                        <span class="badge {% if u.user_type == 'admin' %}bg-danger{% else %}bg-success{% endif %}">
+                                            {{ u.user_type|title }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <a href="{% url 'user-detail' u.id %}" class="btn btn-sm btn-info text-white">View/Edit</a>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="4" class="text-center">No users found.</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
